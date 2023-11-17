@@ -1,0 +1,13 @@
+<library path="lib/libfranka_control_test">
+  <class name="robot_controllers/RobotXYZController" type="robot_controllers::RobotXYZController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      Cartesian controller
+    </description>
+  </class>
+  <class name="robot_controllers/RobotOSCController" type="robot_controllers::RobotOSCController" base_class_type="controller_interface::ControllerBase">
+    <description>
+      OSC
+    </description>
+  </class>
+  
+</library>

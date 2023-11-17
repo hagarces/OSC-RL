@@ -1,0 +1,200 @@
+<mujoco model="robo_harvester_arm">
+
+    <compiler angle="radian" />
+    <option gravity="0 0 -9.81" integrator="RK4" timestep="0.01"/>
+    <default>
+        <joint armature="1" damping="1" limited="true"/>
+        <geom friction="0.1 0.1 0.1" rgba="0.7 0.7 0 1"/>
+    </default>
+
+    <asset>
+        <mesh name="link_0_mesh" file="meshes/arm/link0.stl" scale="1 1 1" />
+        <mesh name="link_1_mesh" file="meshes/arm/link1.stl" scale="1 1 1" />
+        <mesh name="link_2_mesh" file="meshes/arm/link2.stl" scale="1 1 1" />
+        <mesh name="link_3_mesh" file="meshes/arm/link3.stl" scale="1 1 1" />
+        <mesh name="link_4_mesh" file="meshes/arm/link4.stl" scale="1 1 1" />
+        <mesh name="link_5_mesh" file="meshes/arm/link5.stl" scale="1 1 1" />
+        <mesh name="link_6_mesh" file="meshes/arm/link6.stl" scale="1 1 1" />
+        <mesh name="link_7_mesh" file="meshes/arm/link7.stl" scale="1 1 1" />
+        <mesh name="hand_mesh" file="meshes/arm/hand.stl" scale="1 1 1" />
+        <mesh name="finger_mesh" file="meshes/arm/finger.stl" scale="1 1 1" />
+
+        <mesh name="link_0_visual" file="meshes/arm/link0_visual.stl" scale="1 1 1" />
+        <mesh name="link_1_visual" file="meshes/arm/link1_visual.stl" scale="1 1 1" />
+        <mesh name="link_2_visual" file="meshes/arm/link2_visual.stl" scale="1 1 1" />
+        <mesh name="link_3_visual" file="meshes/arm/link3_visual.stl" scale="1 1 1" />
+        <mesh name="link_4_visual" file="meshes/arm/link4_visual.stl" scale="1 1 1" />
+        <mesh name="link_5_visual" file="meshes/arm/link5_visual.stl" scale="1 1 1" />
+        <mesh name="link_6_visual" file="meshes/arm/link6_visual.stl" scale="1 1 1" />
+        <mesh name="link_7_visual" file="meshes/arm/link7_visual.stl" scale="1 1 1" />
+        <mesh name="hand_visual" file="meshes/arm/hand_visual.stl" scale="1 1 1" />
+
+
+    </asset>
+
+    <contact>
+            <exclude body1="EE" body2="agent_target" />
+            <exclude body1="link_0" body2="agent_target" />
+            <exclude body1="link_1" body2="agent_target" />
+            <exclude body1="link_2" body2="agent_target" />
+            <exclude body1="link_3" body2="agent_target" />
+            <exclude body1="link_4" body2="agent_target" />
+            <exclude body1="link_5" body2="agent_target" />
+            <exclude body1="link_6" body2="agent_target" />
+            <exclude body1="link_7" body2="agent_target" />
+            <exclude body1="hand_link" body2="agent_target" />
+            <exclude body1="right_finger" body2="agent_target" />
+            <exclude body1="left_finger" body2="agent_target" />
+
+            <exclude body1="right_finger" body2="target" />
+            <exclude body1="left_finger" body2="target" />
+    </contact>
+
+    <asset>
+        <texture name="texplane" type="2d" builtin="checker" rgb1=".3 .4 .5" rgb2=".2 0.3 0.4" width="512" height="512" mark="cross" markrgb=".8 .8 .8"/>
+        <material name="matplane" reflectance="0.3" texture="texplane" texrepeat="1 1" texuniform="true"/>
+    </asset>
+
+
+     <worldbody>
+        <!-- Floor creation -->
+        <body name="floor" pos="0 0 0">
+            <geom name="ground" pos="0 0 0" rgba="1 1 1 1" size="5 5 20" type="plane" material="matplane"/>
+            <geom name="x_axes" pos="1 0 0" rgba="1 0 0 1" size=".001" type="sphere"/>
+            <geom name="y_axes" pos="0 1 0" rgba="0 0 1 1" size=".001" type="sphere"/>
+            
+        </body> 
+
+        <!-- For ABS library compatibility -->
+        <body name="hand" pos="0 0 0" mocap="true">
+            <geom type="box" size=".04 .04 .01" rgba="0 1 1 .5" contype="20" conaffinity="20"/>
+        </body>
+
+        <body name="target" pos="1.1 0.15 0.51" mocap="true">
+            <geom type="sphere" pos="0 0 0" rgba="0.88 0.5 0.07 1" size=".03" name="target_geom" conaffinity="0" contype="0"/>
+        </body> 
+        
+        <!-- V4.0 visualizacion elipsoide y target del agente -->
+
+        <body name="agent_target" pos="0 0 -1" mocap="true">
+            <geom type="sphere" pos="0 0 0" rgba="0.9 0.91, 0.55 1" size=".03" contype="17" conaffinity="17" name ="agent_target_geom" mass="0.000001"/>
+        </body> 
+
+        <!-- Creacion del robot  -->
+        <!-- [WARNING]: Dont create any other geom below this point, as the enviromental interface expects some definition order -->
+
+        <!-- Arm definition  -->
+        <body name="link_0" pos="0 0 0">
+            <geom name="robo_link_0_geom" pos="0 0 0" type="mesh"  rgba="1 1 1 0" mesh="link_0_mesh" />
+            <geom name="link_0_visual_geom" pos="0 0 0" type="mesh"  rgba="0.7 0.7 0.7 1" mesh="link_0_visual" conaffinity="0" contype="0"/>
+            <inertial mass="0.629769" pos="-0.041018 -0.00014 0.049974" fullinertia="0.00315 0.00388 0.004285 8.2904E-07 0.00015 8.2299E-06"/>
+
+            <!-- 1st link  -->
+            <body name="link_1" pos="0 0 0.333">
+                <geom name="robo_link_1_geom" pos="0 0 0" type="mesh"  rgba="1 1 1 0" mesh="link_1_mesh" />
+                <geom name="link_1_visual_geom" pos="0 0 0" type="mesh"  rgba="1 1 1 1" mesh="link_1_visual" conaffinity="0" contype="0"/>
+
+                <inertial mass="4.970684" pos="0.003875 0.002081 -0.04762" fullinertia="0.70337 0.70661 0.0091170 -0.000139 0.006772 0.019169"/>
+                <joint name="link_1_joint" pos="0 0 0" axis="0 0 1" limited="true" range="-2.3093 2.3093" damping="0.003" stiffness="0" frictionloss="0"/>
+
+                <!-- 2nd link  -->
+                <body name="link_2" pos="0 0 0" euler="-1.570796326 0 0">
+                    <geom name="robo_link_2_geom" pos="0 0 0" type="mesh"  rgba="1 1 1 0" mesh="link_2_mesh" />
+                    <geom name="link_2_visual_geom" pos="0 0 0" type="mesh"  rgba="1 1 1 1" mesh="link_2_visual" conaffinity="0" contype="0"/>
+
+                    <inertial mass="0.646926" pos="-0.003141 -0.02872  0.003495" fullinertia="0.007962 2.8110e-02 2.5995e-02 -3.9250e-3 1.0254e-02 7.0400e-04"/>
+                    <joint name="link_2_joint" pos="0 0 0" axis="0 0 1" limited="true" range="-1.5133 1.5133" damping="0.003" stiffness="0" frictionloss="0"/>>
+
+                    <!-- 3rd link  -->
+                    <body name="link_3" pos="0 -0.316 0" euler="1.570796326 0 0">
+                        <geom name="robo_link_3_geom" pos="0 0 0" type="mesh"  rgba="1 1 1 0" mesh="link_3_mesh" />
+                        <geom name="link_3_visual_geom" pos="0 0 0" type="mesh" rgba="0.7 0.7 0.7 1" mesh="link_3_visual" conaffinity="0" contype="0"/>
+
+                        <inertial mass="3.228604" pos="2.7518e-02 3.9252e-02 -6.6502e-02" fullinertia="3.7242e-02 3.6155e-02 1.0830e-02 -4.7610e-03 -1.1396e-02 -1.2805e-02"/>
+                        <joint name="link_3_joint" pos="0 0 0" axis="0 0 1" limited="true" range="-2.4937 2.4937" damping="0.003" stiffness="0" frictionloss="0"/>
+
+                        <!-- 4th link  -->
+                        <body name="link_4" pos="0.0825 0 0" euler="1.570796326 0 0">
+                            <geom name="robo_link_4_geom" pos="0 0 0" type="mesh"  rgba="1 1 1 0" mesh="link_4_mesh" />
+                            <geom name="link_4_visual_geom" pos="0 0 0" type="mesh"  rgba="1 1 1 1" mesh="link_4_visual" conaffinity="0" contype="0"/>
+
+                            <inertial mass="3.587895" pos="-5.317e-02 1.04419e-01 2.7454e-02" fullinertia="2.5853e-02 1.9552e-02 2.8323e-02 7.7960e-03 -1.3320e-03 8.6410e-03"/>
+                            <joint name="link_4_joint" pos="0 0 0" axis="0 0 1" limited="true" range="-2.7478  -0.4461" damping="0.003" stiffness="0" frictionloss="0"/>
+
+                            <!-- 5th link  -->
+                            <body name="link_5" pos="-0.0825 0.384 0" euler="-1.570796326 0 0">
+                                <geom name="robo_link_5_geom" pos="0 0 0" type="mesh"  rgba="1 1 1 0" mesh="link_5_mesh" />
+                                <geom name="link_5_visual_geom" pos="0 0 0" type="mesh"  rgba="0.7 0.7 0.7 1" mesh="link_5_visual" conaffinity="0" contype="0"/>
+
+                                <inertial mass="1.225946" pos="-1.1953e-02 4.1065e-02 -3.8437e-02" fullinertia="3.5549e-02 2.9474e-02 8.6270e-03 -2.1170e-03 -4.0370e-03 2.2900e-04"/>
+                                <joint name="link_5_joint" pos="0 0 0" axis="0 0 1" limited="true" range="-2.4800 2.4800" damping="0.003" stiffness="0" frictionloss="0"/>
+
+                                <!-- 6th link  -->
+                                <body name="link_6" pos="0 0 0" euler="1.570796326 0 0">
+                                    <geom name="robo_link_6_geom" pos="0 0 0" type="mesh"  rgba="1 1 1 0" mesh="link_6_mesh" />
+                                    <geom name="link_6_visual_geom" pos="0 0 0" type="mesh"  rgba="1 1 1 1" mesh="link_6_visual" conaffinity="0" contype="0"/>
+
+                                    <inertial mass="1.666555" pos="6.0149e-02 -1.4117e-02 -1.0517e-02" fullinertia="1.9640e-03 4.3540e-03 5.4330e-03 1.0900e-04 -1.1580e-03 3.4100e-04"/>
+                                    <joint name="link_6_joint" pos="0 0 0" axis="0 0 1" limited="true" range="0.8521 4.2094" damping="0.003" stiffness="0" frictionloss="0"/>
+                                    
+                                    <!-- 7th link -->
+                                    <body name="link_7" pos="0.088 0 0" euler="1.570796326 0 0">
+                                        <geom name="robo_link_7_geom" pos="0 0 0" type="mesh"  rgba="1 1 1 0" mesh="link_7_mesh" />
+                                        <geom name="link_7_visual_geom" pos="0 0 0" type="mesh"  rgba="0.7 0.7 0.7 1" mesh="link_7_visual" conaffinity="0" contype="0"/>
+
+                                        <inertial mass="7.35522e-01" pos="1.0517e-02 -4.252e-03 6.1597e-02" fullinertia="1.2516e-02 1.0027e-02 4.8150e-03 -4.2800e-04 -1.1960e-03 -7.4100e-04"/>
+                                        <joint name="link_7_joint" pos="0 0 0" axis="0 0 1" limited="true" range="-2.6895 2.6895" damping="0.003" stiffness="0" frictionloss="0"/>
+                                        
+                                        <!-- Robot hand -->
+                                        <body name="hand_link" pos="0 0 0.107" euler="0 0 -0.7853981">
+                                            <geom name="robo_hand_link_geom" pos="0 0 0" type="mesh"  rgba="1 1 1 0" mesh="hand_mesh" />
+                                            <geom name="hand_link_visual_geom" pos="0 0 0" type="mesh"  rgba="1 1 1 1" mesh="hand_visual" conaffinity="0" contype="0"/>
+
+                                            <inertial mass="0.73" pos="-0.01 0 0.03" fullinertia="0.001 0.0025 0.0017 0 0 0" />
+
+                                            <!-- left finger -->
+                                            <body name="left_finger" pos="0 7.58e-3 0.06375" euler="0 0 0">
+                                                <geom name="robo_left_finger_geom" pos="0 0 0" type="mesh" rgba="1 1 1 1" mesh="finger_mesh" />
+
+                                                <inertial mass="0.015" pos="0 0 0" fullinertia="2.375e-06 2.375e-06 7.5e-07 0 0 0" />
+                                                <joint name="left_finger_joint" pos="0 0 0" axis="0 1 0" limited="true" range="0 0.04" damping="30" type="slide" />
+                                            </body>
+
+                                            <!-- right finger -->
+                                            <body name="right_finger" pos="0 -7.58e-3 0.06375" euler="0 0 3.1415926">
+                                                <geom name="robo_right_finger_geom" pos="0 0 0" type="mesh" rgba="1 1 1 1" mesh="finger_mesh" />
+
+                                                <inertial mass="0.015" pos="0 0 0" fullinertia="2.375e-06 2.375e-06 7.5e-07 0 0 0"/>
+                                                <joint name="right_finger_joint" pos="0 0 0" axis="0 1 0" limited="true" range="0 0.04" damping="30" type="slide" />
+                                            </body>
+
+                                            <!-- For ABR library compatibility we need to define a body named "EE" -->
+                                            <body name="EE" pos="0 0 0.09"/>
+                                        </body>
+                                    </body>
+                                </body>
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+
+    </worldbody>
+
+    <actuator>
+        <!-- Actuadores del brazo -->
+        <motor ctrllimited="true" ctrlrange="-87 87" joint="link_1_joint" name="link_1_motor"/>
+        <motor ctrllimited="true" ctrlrange="-87 87" joint="link_2_joint" name="link_2_motor"/>
+        <motor ctrllimited="true" ctrlrange="-87 87" joint="link_3_joint" name="link_3_motor"/>
+        <motor ctrllimited="true" ctrlrange="-87 87" joint="link_4_joint" name="link_4_motor"/>
+        <motor ctrllimited="true" ctrlrange="-12 12" joint="link_5_joint" name="link_5_motor"/>
+        <motor ctrllimited="true" ctrlrange="-12 12" joint="link_6_joint" name="link_6_motor"/>
+        <motor ctrllimited="true" ctrlrange="-12 12" joint="link_7_joint" name="link_7_motor"/>
+
+        <!-- Actuadores de los dedos -->
+        <motor ctrllimited="true" ctrlrange="-100 100" joint="right_finger_joint" name="right_finger_motor"/>
+        <motor ctrllimited="true" ctrlrange="-100 100" joint="left_finger_joint" name="left_finger_motor"/>
+
+    </actuator>
+</mujoco>
